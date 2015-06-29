@@ -42,6 +42,6 @@ Il existe d'autre librairie en OpenSource qui peuvent être utilisées égalemen
 		"Permission Denied"
 	Deux solutions : 
 		- Faire un alias du port :
-			'sudo ln -s /dev/ttyACMx /dev/ttyS8x'
+			sudo ln -s /dev/ttyACMx /dev/ttyS8x
 		- Autre solution, changer les droits de l'user sur les ports (cf Google, je vais pas tout recopier ;) )
 
