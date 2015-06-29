@@ -4,6 +4,8 @@
 //
 //  Created by Louis Faury on 09/06/2015.
 //  Copyright (c) 2015 Louis Faury. All rights reserved.
+// 
+// /!\ Test class for a mBed with appropriate code 
 //
 
 
