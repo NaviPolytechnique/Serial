@@ -30,7 +30,7 @@ Il existe d'autre librairie en OpenSource qui peuvent être utilisées égalemen
 @ La classe utilise une classe d’exception spécifique (serial_exception) définie dans un header.hpp
   Du coup, pour la compiler « à la main » on se place dans le répertoire Sérial/ (le premier) et on lance la commande : 
 	
-	‘g++ -I serial_exception/ Serial/Serial.cpp Serial/test.cpp -o test’ 
+	g++ -I serial_exception/ Serial/Serial.cpp Serial/test.cpp -o test 
 
   qui créé l’éxécutable « test » dans le répertoire Sérial/
 
