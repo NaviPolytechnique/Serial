@@ -28,11 +28,14 @@ Il existe d'autre librairie en OpenSource qui peuvent être utilisées égalemen
 
 
 @ La classe utilise une classe d’exception spécifique (serial_exception) définie dans un header.hpp
-  Du coup, pour la compiler « à la main » on se place dans le répertoire Sérial/ (le premier) et on lance la commande : 
-	
-	g++ -I serial_exception/ Serial/Serial.cpp Serial/test.cpp -o test 
 
-  qui créé l’éxécutable « test » dans le répertoire Sérial/
+
+@ Pour compiler la classe, il suffit de rentrer les commandes suivantes : 
+            cd <root_directory_of_Serial_class>
+            make
+            make clean
+
+  make clean étant optionnel (enlever les fichiers .o inutiles)
 
 
 @ ATTENTION : Selon votre version de g++, il y a peut-être des choses qu'il ne va pas aimer dans le main de test.cpp. Pour régler le problème, il faut juste enlever le "serial_exception::" lors de la construction de l'exception (on ne peut pas appeler le constructeur sur un objet déjà créé)
