@@ -31,6 +31,7 @@ Il existe d'autre librairie en OpenSource qui peuvent être utilisées égalemen
 
 
 @ Pour compiler la classe, il suffit de rentrer les commandes suivantes : 
+
             cd <root_directory_of_Serial_class>
             make
             make clean
