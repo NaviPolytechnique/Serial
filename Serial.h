@@ -1,6 +1,6 @@
 //
-//  Header.h
-//  serial_port
+//  Serial.h
+//  Serial
 //
 /*
  This program is free software: you can redistribute it and/or modify

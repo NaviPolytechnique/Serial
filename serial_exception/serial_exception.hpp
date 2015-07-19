@@ -1,5 +1,5 @@
 //
-//  serial_exception.h
+//  serial_exception.hpp
 //  Serial
 //
 /*
