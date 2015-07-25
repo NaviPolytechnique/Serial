@@ -1,20 +1,15 @@
 //
-//  Serial.cpp
-//  Serial
-/*
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+//  serial_port.cpp
+//  serial_port
+//
+//  Created by Louis Faury on 09/06/2015.
+//  Copyright (c) 2015 Louis Faury. All rights reserved.
+//
 
 #include "Serial.h"
+#include "pthread.h"
+#include "assert.h"
+#include "BlockingQueue.h"
 
 
 
@@ -27,17 +22,17 @@ Serial::Serial() : file(0)
 
 
 Serial::Serial(const char* port_name, long unsigned int baud_rate){
-    
-    
+
+
     port_name = port_name;
-    
+
     struct termios options;
-    
+
     // Open device
     file = open(port_name, O_RDWR | O_NOCTTY | O_NDELAY);       // Open port
-    if (file == -1) throw serial_exception::serial_exception(1,"Failed to open port",0);
+   // if (file == -1) throw serial_exception::serial_exception(1,"Failed to open port",0);
     fcntl(file, F_SETFL, FNDELAY);                              // Open in in non-blocking mod
-    
+
     //Set parameter
     tcgetattr(file, &options);                                  // Get the current options of the port
     bzero(&options, sizeof(options));
@@ -50,7 +45,7 @@ Serial::Serial(const char* port_name, long unsigned int baud_rate){
         case 115200 : Speed=B115200; break;
         default : throw std::invalid_argument("Unvalid baud rate for the device !");
     }
-    
+
     cfsetispeed(&options, Speed);                               // Set the baud rate
     cfsetospeed(&options, Speed);
     options.c_cflag |= ( CLOCAL | CREAD | CS8);                 // Configuring the device : 8 bits, no parity, no control !
@@ -58,13 +53,13 @@ Serial::Serial(const char* port_name, long unsigned int baud_rate){
     options.c_cc[VTIME]=0;                                      // Timer unused
     options.c_cc[VMIN]=0;                                       // At least on character before satisfy reading
     tcsetattr(file, TCSANOW, &options);                         // Activate the settings
-    
+
     sleep(2);                                                   //required to make flush work, for some reason (couldn't find why !)
     tcflush(file,TCIOFLUSH);
-    
+
     std::cout << "Succeeded connecting " << port_name << " and setting options !" << std::endl;
     //Telling the user the connection was made succesfully
-    
+
 }
 
 
@@ -73,7 +68,7 @@ const std::string Serial::getPortName() const
 {
     std::string str(port_name);
     return str;
-    
+
 }
 
 
@@ -163,7 +158,7 @@ int Serial::readChar(char* buffer)
 
 
 int Serial::readLine(char* string_buffer){
-    
+
     return this->readString(string_buffer, '\n', 128);
 
 }
@@ -200,6 +195,47 @@ int Serial::readString(char *String,char FinalChar,unsigned int MaxNbBytes)
     }
     return -3;                                                          // Buffer is full : return -3
 }
+
+void Serial::startListening(){
+    pthread_attr_t threadAttribute;
+    pthread_attr_setinheritsched(&threadAttribute,PTHREAD_EXPLICIT_SCHED);
+    struct sched_param* priority = new sched_param();
+    priority->__sched_priority = 19;
+    pthread_attr_setschedparam(&threadAttribute, priority);
+    pthread_attr_init(&threadAttribute);
+    pthread_attr_setscope(&threadAttribute, PTHREAD_SCOPE_SYSTEM);
+    pthread_attr_setdetachstate(&threadAttribute, PTHREAD_CREATE_DETACHED);
+    pthread_attr_setschedpolicy(&threadAttribute, SCHED_FIFO);
+    pthread_create(&PthreadID, &threadAttribute, Serial::listeningAction, (void*)this);
+    pthread_attr_destroy(&threadAttribute);
+
+
+    //priority.delete();
+    std::cout<<"Start Listening to the port"<<std::endl;
+}
+
+
+void Serial::stopListening(){
+
+}
+
+void* Serial::listeningAction(void* lvoid){
+
+    Serial* serialPort = static_cast<Serial*>(lvoid);
+    assert(serialPort);
+    char* line = new char[128];
+    while(true){
+        int status = serialPort->readLine(line);
+        serialPort->m_list.add(line);
+
+    }
+    return 0;
+}
+
+char* Serial::listen(){
+    return m_list.pop();
+}
+
 
 
 
