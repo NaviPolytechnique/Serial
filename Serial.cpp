@@ -198,7 +198,7 @@ int Serial::readString(char *String,char FinalChar,unsigned int MaxNbBytes)
 
 void Serial::startListening(){
     pthread_attr_t threadAttribute;
-    pthread_attr_setinheritsched(&threadAttribute,PTHREAD_EXPLICIT_SCHED);
+    //pthread_attr_setinheritsched(&threadAttribute,PTHREAD_EXPLICIT_SCHED);
     struct sched_param* priority = new sched_param();
     priority->__sched_priority = 19;
     pthread_attr_setschedparam(&threadAttribute, priority);
